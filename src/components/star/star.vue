@@ -26,18 +26,18 @@
       itemClasses(){
         let result = [];
         let score = Math.floor(this.score * 2) / 2;
-        let hasDecimal = score % 1 !==0;
+        let hasDecimal = score % 1 !== 0;
         let integer = Math.floor(score);
 
-        for(let i =0;i<integer;i++){
+        for (let i = 0; i < integer; i++) {
           result.push(CLS_ON)
         }
 
-        if(hasDecimal){
+        if (hasDecimal) {
           result.push(CLS_HALF)
         }
 
-        while(result.length < LENGTH){
+        while (result.length < LENGTH) {
           result.push(CLS_OFF)
         }
 
@@ -47,8 +47,8 @@
   };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-  @import "../../common/stylus/mixin.styl"
+<style lang="stylus" type="text/stylus">
+  @import "../../common/stylus/mixin.styl";
 
   .star
     font-size: 0
