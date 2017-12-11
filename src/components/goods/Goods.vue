@@ -2,7 +2,8 @@
   <div class="goods">
     <div class="menu-warpper" ref="menuWrapper">
       <ul>
-        <li v-for="item in goods" class="menu-item">
+        <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex === index }"
+            @click="selectMenu(index,$event)">
           <span class="text border-1px">
             <span v-show="item.type >0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
@@ -11,7 +12,7 @@
     </div>
     <div class="foods-wrapper" ref="foodWrapper">
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{ item.name }}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -46,7 +47,9 @@
     data(){
       return {
         goods: {},
-        classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+        classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
+        listHeight: [],
+        scrollY: 0
       }
     },
     props: {
@@ -54,13 +57,26 @@
         type: Object
       }
     },
-    mounted(){
+    computed: {
+      currentIndex(){
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i];
+          let height2 = this.listHeight[i + 1];
+          if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+            return i;
+          }
+        }
+        return 0;
+      }
+    },
+    created(){
       this.$http.get('/data.json').then((req) => {
         if (req.status === ERR_OK) {
           this.goods = req.data.goods;
           // DOM 更新后才可执行$nextTick，vue更新DOM是异步的
           this.$nextTick(() => {
-            this._initScroll()
+            this._initScroll();
+            this._calculateHeight();
           })
 
         }
@@ -68,9 +84,39 @@
     },
     methods: {
       _initScroll(){
-        this.menuScroll = new BScroll(this.$refs.menuWrapper, {});
+        // 左侧栏滚动
+        this.menuScroll = new BScroll(this.$refs.menuWrapper, {
+          click: true  // 左侧能点击
+        });
+        // goods列表滚动
+        this.foodsScroll = new BScroll(this.$refs.foodWrapper, {
+          probeType: 3 // 希望能监测实时滚动位置
+        });
 
-        this.foodsScroll = new BScroll(this.$refs.foodWrapper, {});
+        this.foodsScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y))
+        })
+      },
+      _calculateHeight(){
+        let foodList = this.$refs.foodWrapper.querySelectorAll('.food-list-hook');
+        let height = 0;
+        this.listHeight.push(height);
+
+        for (let i = 0; i < foodList.length; i++) {
+          let item = foodList[i];
+          height += item.clientHeight;
+          this.listHeight.push(height);
+        }
+      },
+      selectMenu(index, event){
+        if (!event._constructed) {
+          // 移动端点击时，BScroll中_constructed是true，pc端没有这个属性
+          return;
+        }
+
+        let foodList = this.$refs.foodWrapper.querySelectorAll('.food-list-hook');
+        let el = foodList[index];
+        this.foodsScroll.scrollToElement(el, 300)
       }
     }
   }
@@ -119,6 +165,14 @@
           vertical-align middle
           border-1px (rbga(7, 17, 27, 0.1))
           font-size 12px
+        &.current
+          position relative
+          z-index 10
+          margin-top -1px
+          background-color: #fff
+          font-weight 700
+          .text
+            border-none()
     .foods-wrapper
       flex 1
       .title
