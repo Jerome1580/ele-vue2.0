@@ -36,10 +36,15 @@
         </li>
       </ul>
     </div>
+    <shop-cart
+      :delivery-price="seller.deliveryPrice"
+      :min-price="seller.minPrice"
+    ></shop-cart>
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import BScroll from 'better-scroll'
+  import BScroll from 'better-scroll';
+  import ShopCart from '@/components/shopcart/ShopCart'
 
   const ERR_OK = 200;
 
@@ -118,6 +123,9 @@
         let el = foodList[index];
         this.foodsScroll.scrollToElement(el, 300)
       }
+    },
+    components: {
+      ShopCart
     }
   }
 </script>
