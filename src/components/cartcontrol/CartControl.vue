@@ -46,14 +46,13 @@
 </script>
 
 <style scoped lang="stylus" type="text/stylus">
-  .move-transition
-    opacity 1
-    transform translation3D(0, 0, 0)
-    transition all 0.4s liner
 
-  .move-enter, .move-leave
+  .move-enter-active, .move-leave-active
+    transition all 0.4s ease
+
+  .move-enter, .move-leave-to
     opacity 0
-    transform translate3D(24px, 0, 0)
+    transform translateX(24px)
 
   .cartcontrol
     font-size 0
