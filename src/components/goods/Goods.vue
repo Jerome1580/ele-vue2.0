@@ -43,6 +43,7 @@
       :delivery-price="seller.deliveryPrice"
       :min-price="seller.minPrice"
       :select-foods="selectFoods"
+      ref="shopcart"
     ></shop-cart>
   </div>
 </template>
@@ -50,6 +51,8 @@
   import BScroll from 'better-scroll';
   import ShopCart from '@/components/shopcart/ShopCart'
   import CartControl from '@/components/cartcontrol/CartControl'
+
+  import Bus from '@/EventBus';
 
   const ERR_OK = 200;
 
@@ -102,7 +105,10 @@
           })
 
         }
-      })
+      });
+      // 绑定添加一个购物车，添加动画的小球事件
+      Bus.$on('cart.add', target => this.$refs.shopcart.drop(target))
+
     },
     methods: {
       _initScroll(){

@@ -15,6 +15,14 @@
         <div class="pay" :class="payClass">{{ payDesc }}</div>
       </div>
     </div>
+    <div class="ball-container">
+      <transition-group name="drop">
+        <div v-for="(ball,index) in balls" v-show="ball.show" class="ball" :key="index"></div>
+      </transition-group>
+      <!--      <transition name="drop-inner">
+              <div class="inner"></div>
+            </transition>-->
+    </div>
   </div>
 </template>
 
@@ -24,8 +32,7 @@
       selectFoods: {
         type: Array,
         default(){
-          return [
-          ];
+          return [];
         }
       },
       deliveryPrice: {
@@ -35,6 +42,27 @@
       minPrice: {
         type: Number,
         default: 0
+      }
+    },
+    data(){
+      return {
+        balls: [
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          }
+        ]
       }
     },
     computed: {
@@ -68,11 +96,23 @@
           return 'enough';
         }
       }
+    },
+    methods: {
+      // 添加小球动画
+      drop(el){
+        console.log(el)
+      }
     }
   }
 </script>
 
 <style scoped lang="stylus" type="text/stylus">
+  .drop-enter-active, .drop-leave-active
+    transition all 0.4s ease
+
+  .drop-inner-enter-active, .drop-inner-leave-active
+    transition all 0.4s ease
+
   .shopcart
     position fixed
     left 0
@@ -160,4 +200,16 @@
           &.enough
             background-color: #00b43c
             color #fff
+    .ball-container
+      .ball
+        position fixed
+        left 32px
+        bottom 22px
+        z-index 200
+      .inner
+        width 16px
+        height 16px
+        border-radius 50%
+        background rgb(0, 160, 220)
+
 </style>

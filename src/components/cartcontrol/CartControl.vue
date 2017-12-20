@@ -10,6 +10,7 @@
 
 <script type="text/ecmascript-6">
   import Vue from 'vue';
+  import Bus from '@/EventBus';
 
   export default {
     props: {
@@ -29,6 +30,9 @@
         } else {
           this.food.count++;
         }
+
+        // 发送当前点击的按钮
+        Bus.$emit('cart.add', event.target)
 
       },
       decreaseCart(event){
