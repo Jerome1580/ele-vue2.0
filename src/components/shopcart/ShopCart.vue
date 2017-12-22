@@ -1,6 +1,6 @@
 <template>
   <div class="shopcart">
-    <div class="content">
+    <div class="content" @click="toggleList">
       <div class="content-left">
         <div class="logo-wrapper">
           <div class="logo" :class="{highlight:totalCount>0}">
@@ -8,13 +8,14 @@
           </div>
           <div class="num" v-show="totalCount>0">{{totalCount}}</div>
         </div>
-        <div class="price" :class="{highlight:totalPrice>0}">￥{{ totalPrice }}元</div>
+        <div class="price" :class="{highlight:totalPrice>0}">&yen;{{ totalPrice }}元</div>
         <div class="desc">另需配送费￥{{deliveryPrice}}</div>
       </div>
       <div class="content-right">
         <div class="pay" :class="payClass">{{ payDesc }}</div>
       </div>
     </div>
+    <!-- 添加动画小球-->
     <div class="ball-container">
       <transition-group name="drop">
         <div v-for="(ball,index) in balls" v-show="ball.show" class="ball" :key="index"></div>
@@ -23,10 +24,34 @@
               <div class="inner"></div>
             </transition>-->
     </div>
+    <!--购物车详情-->
+    <transition name="fold">
+      <div class="shopcart-list" v-show="listShow">
+        <div class="list-header">
+          <h1 class="title">购物车</h1>
+          <span class="empty">清空</span>
+        </div>
+        <div class="list-content">
+          <ul>
+            <li class="food" v-for="food in selectFoods">
+              <span class="name">{{ food.name }}</span>
+              <div class="price">
+                <span>&yen;{{ food.price * food.count }}</span>
+              </div>
+              <div class="cartcontrol-wrapper">
+                <CartControl :food="food"></CartControl>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import CartControl from '@/components/cartcontrol/CartControl'
+
   export default {
     props: {
       selectFoods: {
@@ -62,7 +87,8 @@
           {
             show: false
           }
-        ]
+        ],
+        fold: true
       }
     },
     computed: {
@@ -95,13 +121,32 @@
         } else {
           return 'enough';
         }
+      },
+      listShow(){
+        if (!this.totalCount) {
+          this.fold = true;
+          return false
+        }
+        let show = !this.fold;
+        return show;
       }
     },
     methods: {
       // 添加小球动画
       drop(el){
-        console.log(el)
+        // 添加小球动画，从cartControl组件$emit（cart.add） -> 到Goods组件 ，再由Goods组件$ref.shopcart 获取到该购物车组件，调用方法drop
+        // TODO 具体实现省略
+        // console.log(el)
+      },
+      toggleList(){
+        if (!this.totalCount) {
+          return;
+        }
+        this.fold = !this.fold
       }
+    },
+    components: {
+      CartControl
     }
   }
 </script>
@@ -112,6 +157,12 @@
 
   .drop-inner-enter-active, .drop-inner-leave-active
     transition all 0.4s ease
+
+  .fold-enter-active, .fold-leave-active
+    transition all 0.5s ease
+
+  .fold-enter-to, .fold-leave
+    transform translate3d(0, -100%, 0)
 
   .shopcart
     position fixed
@@ -212,4 +263,10 @@
         border-radius 50%
         background rgb(0, 160, 220)
 
+    .shopcart-list
+      position absolute
+      left 0
+      top 0
+      z-index -1
+      width 100%
 </style>
