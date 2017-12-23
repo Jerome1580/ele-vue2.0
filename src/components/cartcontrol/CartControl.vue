@@ -52,21 +52,19 @@
 
 <style scoped lang="stylus" type="text/stylus">
 
-  .move-enter-active, .move-leave-active
-    transition all 0.4s ease
-
-  .move-enter, .move-leave-to
-    opacity 0
-    transform translateX(24px)
-
   .cartcontrol
     font-size 0
-    .cart-decrease, .cart-add
+    .cart-decrease
       display inline-block
       padding 6px
       line-height 24px
       font-size 24px
       color rgb(0, 160, 220)
+      &.move-enter-active, &.move-leave-active
+        transition all 0.4s ease
+      &.move-enter, &.move-leave-to
+        opacity 0
+        transform translateX(24px)
     .cart-count
       display inline-block
       vertical-align top
@@ -76,6 +74,12 @@
       text-align center
       font-size 10px
       color rgb(147, 153, 159)
+    .cart-add
+      display inline-block
+      padding 6px
+      line-height 24px
+      font-size 24px
+      color rgb(0, 160, 220)
 
 
 </style>
