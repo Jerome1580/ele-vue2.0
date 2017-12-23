@@ -15,7 +15,7 @@
         <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{ item.name }}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li v-for="food in item.foods" class="food-item border-1px" @click="selectFood(food,$event)">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon" alt="">
               </div>
@@ -45,12 +45,14 @@
       :select-foods="selectFoods"
       ref="shopcart"
     ></shop-cart>
+    <Food :food="selectedFood" ref="food"></Food>
   </div>
 </template>
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll'
   import ShopCart from '@/components/shopcart/ShopCart'
   import CartControl from '@/components/cartcontrol/CartControl'
+  import Food from '@/components/food/Food'
 
   import Bus from '@/EventBus';
 
@@ -62,7 +64,8 @@
         goods: [],
         classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
         listHeight: [],
-        scrollY: 0
+        scrollY: 0,
+        selectedFood: {}
       }
     },
     props: {
@@ -141,15 +144,23 @@
           // 移动端点击时，BScroll中_constructed是true，pc端没有这个属性
           return;
         }
-
         let foodList = this.$refs.foodWrapper.querySelectorAll('.food-list-hook');
         let el = foodList[index];
         this.foodsScroll.scrollToElement(el, 300)
+      },
+      /*点击商品时,显示商品详情*/
+      selectFood(food, event){
+        if (!event._constructed) {
+          return;
+        }
+        this.selectedFood = food;
+        this.$refs.food.show();
       }
     },
     components: {
       ShopCart,
-      CartControl
+      CartControl,
+      Food
     }
   }
 </script>
@@ -256,7 +267,6 @@
               text-decoration line-through
               font-size 10px
               color rgb(147, 153, 159)
-
           .cartcontrol-wrapper
             position absolute
             right 0
