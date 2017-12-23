@@ -100,21 +100,6 @@
 <style type="text/stylus" lang="stylus">
   @import '../../common/stylus/mixin.styl';
 
-  .fade-enter-to, .fade-leave-to
-    opacity 0
-    background rgba(7, 17, 27, 0)
-
-  .fade-enter-active
-    opacity 1
-    background rgba(7, 17, 27, 0.8)
-
-  .fade-leave-active
-    opacity 0
-    background rgba(7, 17, 27, 0)
-
-  .fade-enter-active, .fade-leave-active
-    transition all 1s ease
-
   .header
     position: relative
     overflow: hidden
@@ -236,6 +221,12 @@
       height: 100%
       overflow: auto
       background: rgba(7, 17, 27, 0.8)
+      opacity 1
+      &.fade-enter-active, &.fade-leave-active
+        transition all 1s ease
+      &.fade-enter, &.fade-leave-to
+        opacity 0
+        background rgba(7, 17, 27, 0)
       .detail-wrapper
         min-height: 100%
         width: 100%

@@ -25,6 +25,7 @@
           return
         }
         if (!this.food.count) {
+
           Vue.set(this.food, 'count', 1)
 
         } else {

@@ -48,7 +48,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import BScroll from 'better-scroll';
+  import BScroll from 'better-scroll'
   import ShopCart from '@/components/shopcart/ShopCart'
   import CartControl from '@/components/cartcontrol/CartControl'
 
@@ -103,7 +103,6 @@
             this._initScroll();
             this._calculateHeight();
           })
-
         }
       });
       // 绑定添加一个购物车，添加动画的小球事件
