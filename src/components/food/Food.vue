@@ -18,21 +18,46 @@
             <span class="now">￥{{food.price}}</span>
             <span v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</span>
           </div>
+          <!--加入购物车-->
+          <div class="cartcontrol-wrapper">
+            <CartControl :food="food"></CartControl>
+          </div>
+          <div @click.stop.prevent="addFirst" class="buy" v-show="!food.count || food.count === 0">加入购物车</div>
         </div>
-        <!--加入购物车-->
-        <div class="cartcontrol-wrapper">
-          <CartControl :food="food"></CartControl>
+        <!--间隔-->
+        <Split v-show="food.info"></Split>
+        <!--商品信息-->
+        <div class="info" v-show="food.info">
+          <div class="title">商品信息</div>
+          <p class="text">{{ food.info}}</p>
         </div>
-        <div @click.stop.prevent="addFirst" class="buy" v-show="!food.count || food.count === 0">加入购物车</div>
+        <!--间隔-->
+        <Split v-show="food.info"></Split>
+        <!--商品评价-->
+        <div class="rating">
+          <h1 class="title">商品评价</h1>
+          <RatingSelect
+            :selectType="selectType"
+            :onlyContent="onlyContent"
+            :desc="desc"
+            :ratings="food.ratings"
+          ></RatingSelect>
+        </div>
       </div>
     </div>
   </transition>
 </template>
 
 <script type="text/ecmascript-6">
+  import Vue from 'vue'
   import BScroll from 'better-scroll'
   import CartControl from '@/components/cartcontrol/CartControl'
-  import Vue from 'vue'
+  import Split from '@/components/split/Split'
+  import RatingSelect from '@/components/ratingSelect/RatingSelect'
+
+  const POSITIVE = 0;
+  const NEGATIVE = 1;
+  const ALL = 2;
 
   export default {
     props: {
@@ -42,12 +67,23 @@
     },
     data(){
       return {
-        showFlag: false
+        showFlag: false,
+        selectType: ALL,
+        onlyContent: true,
+        desc: {
+          all: '全部',
+          positive: '推荐',
+          negative: '吐槽'
+        }
       }
     },
     methods: {
       show(){
         this.showFlag = true;
+
+        // 切换每个产品时，都复用这个组件，切换时要初始化该组件
+        this.selectType = ALL;
+        this.onlyContent = true;
 
         // 新增滚动效果
         this.$nextTick(() => {
@@ -67,12 +103,14 @@
         }
         Vue.set(this.food, 'count', 1);
 
-        // 发送当前点击的按钮
-        Bus.$emit('cart.add', event.target)
+        // 发送当前点击的按钮,这里是为了触发加购小球坠落，功能未做，先省去
+        /*Bus.$emit('cart.add', event.target)*/
       }
     },
     components: {
-      CartControl
+      CartControl,
+      Split,
+      RatingSelect
     }
 
   }
@@ -112,8 +150,9 @@
           padding 10px
           font-size 20px
           color #fff
-    /*内容*/
+    /* 内容 */
     .content
+      position relative
       padding 18px
       .title
         line-height 14px
@@ -142,21 +181,42 @@
           text-decoration line-through
           font-size 10px
           color rgb(147, 153, 159)
-    .cartcontrol-wrapper
-      position absolute
-      right 12px
-      bottom 12px
-    .buy
-      position absolute
-      right 18px
-      bottom 18px
-      z-index 10
-      height 24px
-      line-height 24px
-      padding 0 12px
-      box-sizing border-box
-      border-radius 12px
-      font-size 10px
-      color #fff
-      background-color: rgb(0, 160, 220)
+      .cartcontrol-wrapper
+        position absolute
+        right 12px
+        bottom 12px
+      .buy
+        position absolute
+        right 18px
+        bottom 18px
+        z-index 10
+        height 24px
+        line-height 24px
+        padding 0 12px
+        box-sizing border-box
+        border-radius 12px
+        font-size 10px
+        color #fff
+        background-color: rgb(0, 160, 220)
+    /* 商品信息 */
+    .info
+      padding 18px
+      .title
+        line-height 14px
+        margin-bottom 6px
+        font-size 14px
+        color rgb(7, 17, 27)
+      .text
+        line-height 24px
+        padding 0 8px
+        font-size 12px
+        color rgb(77, 85, 93)
+  // 评价
+    .rating
+      padding-top 18px
+      .title
+        line-height 14px
+        margin-left 18px
+        font-size 14px
+        color rgb(7, 17, 27)
 </style>
