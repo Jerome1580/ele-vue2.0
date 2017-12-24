@@ -19,6 +19,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import EventBus from '@/EventBus'
+
   const POSITIVE = 0;
   const NEGATIVE = 1;
   const ALL = 2;
@@ -78,14 +80,14 @@
 
         this.self_selectType = type;
         // 通知父组件，更改数据
-        this.$emit('ratingType.select', type);
+        EventBus.$emit('ratingType.select', type);
       },
       toggleContent(event){
         if (!event._constructed) {
           return;
         }
-        this.self_onlyContent = !this.self_onlyContent
-        this.$emit('content.toggle', this.self_onlyContent);
+        this.self_onlyContent = !this.self_onlyContent;
+        EventBus.$emit('content.toggle', this.self_onlyContent);
       }
     }
   }

@@ -1,3 +1,4 @@
+<script src="../../../../vue-learn/vue-news-project/src/main.js"></script>
 <template>
   <transition name="move">
     <div v-show="showFlag" class="food" ref="food">
@@ -42,6 +43,24 @@
             :desc="desc"
             :ratings="food.ratings"
           ></RatingSelect>
+          <div class="rating-wrapper">
+            <ul v-show="food.ratings && food.ratings.length">
+              <li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings"
+                  class="rating-item border-1px">
+                <div class="user">
+                  <span class="name">{{ rating.username }}</span>
+                  <img class="avatar" width="12" height="12" :src="rating.avatar">
+                </div>
+                <div class="time">{{ rating.rateTime | formatDate }}</div>
+                <p class="text">
+                  <span
+                    :class="{'icon-thumb_up':rating.rateType === 0 ,'icon-thumb_down':rating.rateType === 1}"></span>
+                  {{ rating.text }}
+                </p>
+              </li>
+            </ul>
+            <div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
+          </div>
         </div>
       </div>
     </div>
@@ -51,6 +70,7 @@
 <script type="text/ecmascript-6">
   import Vue from 'vue'
   import BScroll from 'better-scroll'
+  import EventBus from '@/EventBus'
   import CartControl from '@/components/cartcontrol/CartControl'
   import Split from '@/components/split/Split'
   import RatingSelect from '@/components/ratingSelect/RatingSelect'
@@ -58,6 +78,7 @@
   const POSITIVE = 0;
   const NEGATIVE = 1;
   const ALL = 2;
+
 
   export default {
     props: {
@@ -77,6 +98,33 @@
         }
       }
     },
+    created(){
+      // 接收子组件传过来的触发事件
+      let _this = this;
+
+      EventBus.$on('ratingType.select', function (type) {
+        _this.selectType = type;
+        // 数据更新，scroll重新计算，因为vue数据更新触发DOM是异步的
+        _this.$nextTick(() => {
+          _this.scroll.refresh();
+        })
+      });
+
+      EventBus.$on('content.toggle', function (onlyContent) {
+        _this.onlyContent = onlyContent;
+        _this.$nextTick(() => {
+          _this.scroll.refresh();
+        })
+      });
+    },
+    /*    filters: {
+     formatDate(time){
+     let date = new Date(time);
+
+     console.log(formatDatea)
+     return formatDatea(date, 'yyyy-MM-dd hh:mm')
+     }
+     },*/
     methods: {
       show(){
         this.showFlag = true;
@@ -105,6 +153,16 @@
 
         // 发送当前点击的按钮,这里是为了触发加购小球坠落，功能未做，先省去
         /*Bus.$emit('cart.add', event.target)*/
+      },
+      needShow(type, text){
+        if (this.onlyContent && !text) {
+          return false
+        }
+        if (this.selectType === ALL) {
+          return true
+        } else {
+          return type === this.selectType
+        }
       }
     },
     components: {
@@ -117,6 +175,8 @@
 </script>
 
 <style scoped lang="stylus" type="text/stylus">
+  @import "../../common/stylus/mixin.styl"
+
   .food
     position fixed
     left 0
@@ -219,4 +279,46 @@
         margin-left 18px
         font-size 14px
         color rgb(7, 17, 27)
+      .rating-wrapper
+        padding 0 18px
+        .rating-item
+          position relative
+          padding 16px 0
+          border-1px(rgba(7, 17, 27, 0.1))
+          .user
+            position absolute
+            right 0
+            top 16px
+            line-height 12px
+            font-size 0
+            .name
+              display inline-block
+              vertical-align top
+              margin-right 16px
+              font-size 10px
+              color rgb(147, 153, 159)
+            .avatar
+              border-radius 50%
+          .time
+            margin-right 6px
+            line-height 12px
+            font-size 10px
+            color rgb(147, 153, 159)
+          .text
+            line-height 16px
+            font-size 12px
+            color rgb(7, 17, 27)
+            .icon-thumb_up, .icon-thumb_down
+              margin-right 4px
+              line-height 16px
+              font-size 12px
+            .icon-thumb_up
+              color rgb(0, 160, 220)
+            .icon-thumb_down
+              color rgb(147, 153, 159)
+
+        .no-rating
+          padding 16px 0
+          font-size 12px
+          color rgb(147, 153, 159)
 </style>
