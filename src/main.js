@@ -18,7 +18,7 @@ Vue.prototype.$http = Axios;
 
 
 /* eslint-disable no-new */
-var vm = new Vue({
+new Vue({
   el: '#app',
   router,
   template: '<App/>',

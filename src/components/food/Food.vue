@@ -117,14 +117,6 @@
         })
       });
     },
-    /*    filters: {
-     formatDate(time){
-     let date = new Date(time);
-
-     console.log(formatDatea)
-     return formatDatea(date, 'yyyy-MM-dd hh:mm')
-     }
-     },*/
     methods: {
       show(){
         this.showFlag = true;
