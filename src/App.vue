@@ -17,11 +17,17 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import {urlParse} from '@/common/js/util'
   import HeaderView from '@/components/header/Header.vue'
   export default {
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            return queryParam.id;
+          })()
+        }
       }
     },
     components: {
@@ -33,7 +39,9 @@
     methods: {
       fecthSellData(){
         this.$http.get('/data.json').then((req) => {
-          this.seller = req.data.seller;
+
+          this.seller = Object.assign({}, this.seller, req.data.seller)
+          console.log(this.seller.id)
         })
       }
     }
