@@ -12,7 +12,9 @@
         <router-link :to="{path:'/seller'}" active-class="active">商家</router-link>
       </div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -41,7 +43,6 @@
         this.$http.get('/data.json').then((req) => {
 
           this.seller = Object.assign({}, this.seller, req.data.seller)
-          console.log(this.seller.id)
         })
       }
     }

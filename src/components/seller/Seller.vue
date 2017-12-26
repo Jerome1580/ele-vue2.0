@@ -77,6 +77,7 @@
 </template>
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll'
+  import {saveToLocal, loadFromLocal} from '@/common/js/store'
   import Star from '@/components/star/Star.vue'
   import Split from '@/components/split/Split'
 
@@ -90,7 +91,9 @@
     data(){
       return {
         classMap: ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
-        favorite: false
+        favorite: (() => {
+          return loadFromLocal(this.seller.id, 'favorite', false)
+        })()
       }
     },
     computed: {
@@ -153,6 +156,10 @@
           return
         }
         this.favorite = !this.favorite;
+
+        // 存错到localStorage
+        saveToLocal(this.seller.id, 'favorite', this.favorite);
+
       }
     },
     components: {
